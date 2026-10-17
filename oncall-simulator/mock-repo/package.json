@@ -1,0 +1,7 @@
+{
+  "name": "shopfast",
+  "private": true,
+  "type": "module",
+  "description": "ShopFast commerce platform monorepo (checkout API, auth, payment worker, catalog).",
+  "scripts": { "test": "tsx --test tests/*.test.ts" }
+}
