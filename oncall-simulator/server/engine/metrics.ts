@@ -8,7 +8,7 @@ export const HOURS_FORMULA = [
   { key: 'joined', label: 'Duplicate incident linked to an existing PR', minutes: 5, explain: 'Counted like any duplicate alert: ack + link + close' },
   { key: 'note', label: 'Diagnostic note (no code change needed)', minutes: 40, explain: '≈45 min of investigation to reach the same conclusion — minus ≈5 min to read the note' },
   { key: 'escalate', label: 'Escalation with pre-triaged context', minutes: 20, explain: 'Context-gathering the responder no longer has to do before acting' },
-  { key: 'noise', label: 'Noise alert filtered, grouped or self-recovered', minutes: 5, explain: 'Ack + glance + close for an alert that needed no action' },
+  { key: 'noise', label: 'Duplicate or noise alert filtered, grouped or self-recovered', minutes: 5, explain: 'Ack + glance + close (or link) for an alert that needed no separate action' },
 ] as const;
 
 export function computeMetrics(o: Orchestrator, timeline: Metrics['timeline']): Metrics {

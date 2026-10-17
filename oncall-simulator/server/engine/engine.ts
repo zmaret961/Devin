@@ -51,6 +51,7 @@ export class Engine {
   private timeline: Metrics['timeline'] = [];
   private retroDone = false;
   private injectSeq = 0;
+  private learnTimer?: NodeJS.Timeout;
 
   constructor(private opts: { speed?: number; quiet?: boolean } = {}) {
     this.clock = new SimClock(Date.now(), opts.speed ?? 60);
@@ -111,6 +112,7 @@ export class Engine {
   // ---------------------------------------------------------------- run lifecycle
 
   async startRun() {
+    clearTimeout(this.learnTimer);
     if (this.orch) {
       if (!this.retroDone && this.orch.incidents.length) this.learn();
       await this.orch.dispose();
@@ -205,7 +207,8 @@ export class Engine {
     this.saveHistory();
     if (this.config.autoLearn && !this.retroDone) {
       this.status = 'learning';
-      setTimeout(() => this.learn(), this.opts.quiet ? 0 : 1500);
+      const orch = this.orch;
+      this.learnTimer = setTimeout(() => this.orch === orch && this.learn(), this.opts.quiet ? 0 : 1500);
     }
   }
 
@@ -278,7 +281,6 @@ export class Engine {
       return alert.id;
     }
     this.emit(planned);
-    this.clock.start();
     return o.alerts.length > before ? o.alerts.at(-1)!.id : 'suppressed-by-merged-fix';
   }
 
@@ -294,6 +296,7 @@ export class Engine {
   }
 
   async reset() {
+    clearTimeout(this.learnTimer);
     this.clock.pause();
     await this.orch?.dispose();
     this.orch = undefined;

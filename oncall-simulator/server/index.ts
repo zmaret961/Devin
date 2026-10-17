@@ -1,6 +1,6 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { existsSync, readFileSync, statSync } from 'node:fs';
-import { extname, join, normalize } from 'node:path';
+import { extname, join, normalize, sep } from 'node:path';
 import { Engine } from './engine/engine.ts';
 import { PLAYBOOK_DIR, WEB_DIST } from './engine/paths.ts';
 
@@ -16,7 +16,12 @@ function send(res: ServerResponse, status: number, body: unknown) {
 
 async function readBody(req: IncomingMessage): Promise<any> {
   const chunks: Buffer[] = [];
-  for await (const c of req) chunks.push(c as Buffer);
+  let size = 0;
+  for await (const c of req) {
+    size += (c as Buffer).length;
+    if (size > 1_000_000) throw new Error('request body too large');
+    chunks.push(c as Buffer);
+  }
   return chunks.length ? JSON.parse(Buffer.concat(chunks).toString('utf8')) : {};
 }
 
@@ -62,7 +67,7 @@ function serveStatic(req: IncomingMessage, res: ServerResponse) {
   }
   const url = decodeURIComponent((req.url ?? '/').split('?')[0]);
   let file = normalize(join(WEB_DIST, url));
-  if (!file.startsWith(WEB_DIST) || !existsSync(file) || statSync(file).isDirectory()) file = join(WEB_DIST, 'index.html');
+  if (!file.startsWith(WEB_DIST + sep) || !existsSync(file) || statSync(file).isDirectory()) file = join(WEB_DIST, 'index.html');
   res.writeHead(200, { 'content-type': MIME[extname(file)] ?? 'application/octet-stream' });
   res.end(readFileSync(file));
 }

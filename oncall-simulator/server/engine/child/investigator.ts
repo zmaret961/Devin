@@ -227,6 +227,7 @@ class Investigation {
     const found = await this.examine(frames.map((f) => ({ file: f.file, why: `stack frame ${f.fn}`, focus: f.line })), 3);
     if (found) return found;
     const top = frames[0].file;
+    if (!existsSync(join(this.b.repoPath, top))) return this.keywordGrep();
     const imports = [...this.repoFile(top).matchAll(/from '(\.{1,2}\/[^']+)'/g)].map((m) => normalize(join(dirname(top), m[1])));
     if (imports.length) {
       await this.step('think', `Frames themselves look correct; the bad value is probably computed upstream. Following imports of \`${top}\`.`);
@@ -376,16 +377,20 @@ class Investigation {
     if (this.b.goal === 'gather-context-and-escalate') return this.escalate(this.b.service, `Context gathered; code finding attached (${f.title}).`, f);
 
     const claim = await this.rpc.claim({ bugId: f.bugId, file: f.file });
+    let acquired = claim.ok;
     if (!claim.ok) {
       let prId = claim.prId;
       if (!prId) {
         await this.step('scratchpad', `${claim.owner} (${claim.incidentId}) is already fixing ${f.bugId}. Waiting for their PR instead of writing a duplicate fix.`);
-        for (let i = 0; i < 30 && !prId; i++) {
+        for (let i = 0; i < 30 && !prId && !acquired; i++) {
           await this.rpc.sleep({ min: 1 });
-          prId = (await this.rpc.claim({ bugId: f.bugId, file: f.file })).prId;
+          const retry = await this.rpc.claim({ bugId: f.bugId, file: f.file });
+          prId = retry.prId;
+          acquired = retry.ok;
         }
+        if (acquired) await this.step('scratchpad', `${claim.owner} finished without a PR — taking over the fix for ${f.bugId}.`);
       }
-      if (prId) {
+      if (prId && !acquired) {
         this.phase = 'reporting';
         await this.tool('comment_pr', `Adding evidence from ${this.b.incidentId} to PR #${prId}`, COST.commit, () =>
           this.rpc['pr.join']({ prId: prId!, comment: `Additional evidence from **${this.b.incidentId}** (${this.b.alerts.length} alert(s): "${this.b.alerts[0].title}"). Same root cause confirmed independently by ${this.b.childId} in \`${f.file}:${f.line}\`.` }),
@@ -393,7 +398,7 @@ class Investigation {
         await this.step('decision', `Linked ${this.b.incidentId} to PR #${prId} (opened by ${claim.owner}) instead of opening a duplicate.`);
         return { action: 'joined', prId, finding: f, summary: `Same root cause as PR #${prId}: ${f.title}` };
       }
-      return this.note(`Fix in progress by ${claim.owner}`, f);
+      if (!acquired) return this.note(`Fix in progress by ${claim.owner}`, f);
     }
 
     const d = DETECTOR_BY_ID[f.bugId];

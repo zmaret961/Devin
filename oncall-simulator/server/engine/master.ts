@@ -121,7 +121,8 @@ export class Orchestrator {
     const fp = fingerprint(a, this.pb);
     const sig = signature(a);
     const corr = this.pb.correlations.find((c) => c.fingerprints.includes(sig));
-    const open = this.incidents.filter((i) => !CLOSED.includes(i.status));
+    const concludedAndQuiet = (i: Incident) => (i.status === 'noted' || i.status === 'escalated') && this.alertsOf(i).every((x) => x.status === 'resolved');
+    const open = this.incidents.filter((i) => !CLOSED.includes(i.status) && !concludedAndQuiet(i));
     const byFp = open.find((i) => i.fingerprint === fp);
     const byCorr = corr ? open.find((i) => i.groupKey === corr.groupKey) : undefined;
     const target = byFp ?? byCorr;
@@ -522,6 +523,7 @@ ${alerts.slice(0, 5).map((a) => `- ${a.source} · ${a.title}`).join('\n')}${b.kn
   private finish(child: ChildAgent, status: ChildAgent['status'], result?: ChildResult) {
     if (child.status !== 'running') return;
     child.status = status;
+    for (const [bugId, claim] of this.claims) if (claim.owner === child.id && !claim.prId) this.claims.delete(bugId);
     child.endedAt = this.now;
     const w = this.workers.get(child.id);
     this.workers.delete(child.id);
