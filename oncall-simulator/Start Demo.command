@@ -8,6 +8,13 @@ if ! command -v node >/dev/null 2>&1; then
   read -r -p "Press Enter to close..."
   exit 1
 fi
+if ! git --version >/dev/null 2>&1; then
+  echo "The demo needs git, part of Apple's free developer tools. Opening the installer..."
+  xcode-select --install >/dev/null 2>&1
+  echo "Click Install in the box that pops up. When it finishes, double-click Start Demo again."
+  read -r -p "Press Enter to close..."
+  exit 1
+fi
 if [ ! -d node_modules ]; then
   echo "First run: installing (this takes about a minute)..."
   npm install || { read -r -p "Install failed. Press Enter to close..."; exit 1; }

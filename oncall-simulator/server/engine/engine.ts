@@ -121,7 +121,11 @@ export class Engine {
     }
     this.runNumber = (this.runs.at(-1)?.run ?? 0) + 1;
     rmSync(this.runDir(), { recursive: true, force: true });
-    this.repo.init();
+    try {
+      this.repo.init();
+    } catch (err) {
+      throw new Error(`Couldn't create the mock repo with git. Is git installed? On a Mac run "xcode-select --install". (${(err as Error).message.split('\n')[0]})`);
+    }
     this.clock.reset(Date.now());
     this.runStart = this.clock.now();
     this.plan = buildShift(this.runNumber);
