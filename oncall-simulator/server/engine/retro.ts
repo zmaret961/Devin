@@ -326,7 +326,7 @@ export function runRetrospective(o: Orchestrator, pb: Playbook, run: number): { 
     learnings,
     strategyBoard,
     playbookDiff: lineDiff(renderPlaybook(pb), renderPlaybook(next)),
-    summary: `Run ${run}: ${correct}/${scored.length} incidents fully correct, ${wastedChildren} wasted and ${dupChildren} duplicate investigations, ${raceLosers} race losers. ${learnings.length} learnings → playbook v${next.version}.`,
+    summary: `Run ${run}: ${correct}/${scored.length} incidents fully correct, ${wastedChildren} wasted and ${dupChildren} duplicate investigations, ${raceLosers} race losers. ${learnings.length} learning${learnings.length === 1 ? '' : 's'} → playbook v${next.version}.`,
   };
   return { playbook: next, report };
 }

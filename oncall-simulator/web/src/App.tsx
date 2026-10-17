@@ -214,7 +214,7 @@ function LearnBanner({ s, go }: { s: Snapshot; go: (t: Tab) => void }) {
             {retro.score.total - prev} vs shift {retro.run - 1})
           </span>
         )}
-        . The retrospective produced <b className="text-fuchsia-200">{retro.learnings.length} learnings</b> → playbook <b className="text-violet-200">v{retro.toVersion}</b>.
+        . The retrospective produced <b className="text-fuchsia-200">{retro.learnings.length} learning{retro.learnings.length === 1 ? '' : 's'}</b> → playbook <b className="text-violet-200">v{retro.toVersion}</b>.
       </div>
       <div className="ml-auto flex gap-2">
         <button className="btn-ghost" onClick={() => go('learning')}>
