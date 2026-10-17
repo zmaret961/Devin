@@ -12,6 +12,10 @@ No API keys, no cloud services, no cost. Everything runs on your laptop.
 
 ## Run it
 
+**Easiest (no terminal):** install [Node.js](https://nodejs.org) (LTS) and git once, download this repo, then double-click **`Start Demo.command`** (Mac) or **`Start Demo.bat`** (Windows) in the `oncall-simulator` folder. The first launch installs dependencies (about a minute); the dashboard then opens at http://localhost:4100. Close the window to stop. On a Mac, if it says the file can't be opened, right-click it → **Open** → **Open**.
+
+**From a terminal:**
+
 Requires Node.js 20.6+ and git.
 
 ```bash
