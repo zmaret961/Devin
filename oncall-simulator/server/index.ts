@@ -19,9 +19,9 @@ async function readBody(req: IncomingMessage): Promise<any> {
   let size = 0;
   for await (const c of req) {
     size += (c as Buffer).length;
-    if (size > 1_000_000) throw new Error('request body too large');
-    chunks.push(c as Buffer);
+    if (size <= 1_000_000) chunks.push(c as Buffer);
   }
+  if (size > 1_000_000) throw new Error('request body too large');
   return chunks.length ? JSON.parse(Buffer.concat(chunks).toString('utf8')) : {};
 }
 
