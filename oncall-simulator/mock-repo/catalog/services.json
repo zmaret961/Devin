@@ -1,0 +1,48 @@
+{
+  "services": {
+    "checkout-api": {
+      "team": "checkout",
+      "paths": ["services/api/src"],
+      "dependsOn": ["packages/db/src", "packages/shared/src", "services/auth/src"],
+      "autoscaling": true
+    },
+    "auth-service": {
+      "team": "identity",
+      "paths": ["services/auth/src"],
+      "dependsOn": ["packages/shared/src"],
+      "autoscaling": true
+    },
+    "payment-worker": {
+      "team": "payments",
+      "paths": ["services/worker/src"],
+      "dependsOn": ["packages/db/src", "packages/shared/src"],
+      "external": ["api.stripe.com"],
+      "autoscaling": true
+    },
+    "catalog-api": {
+      "team": "catalog",
+      "paths": ["services/catalog/src"],
+      "dependsOn": ["packages/shared/src"],
+      "autoscaling": true
+    },
+    "search-api": {
+      "team": "catalog",
+      "paths": [],
+      "dependsOn": [],
+      "autoscaling": true
+    },
+    "db-primary": { "team": "platform", "paths": [], "dependsOn": [], "infra": true },
+    "db-replica-2": { "team": "platform", "paths": [], "dependsOn": [], "infra": true },
+    "edge": { "team": "platform", "paths": [], "dependsOn": [], "infra": true }
+  },
+  "runbooks": {
+    "disk": "docs/runbooks/disk-usage.md",
+    "tls": "docs/runbooks/tls-certificates.md",
+    "stripe": "docs/runbooks/stripe-degradation.md",
+    "replication": "docs/runbooks/replication-lag.md",
+    "security": "docs/runbooks/security-incident.md",
+    "synthetic": "docs/runbooks/synthetic-checks.md",
+    "no-data": "docs/runbooks/autoscaling-no-data.md",
+    "cpu": "docs/runbooks/cpu-warnings.md"
+  }
+}
