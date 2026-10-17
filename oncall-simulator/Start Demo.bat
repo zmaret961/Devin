@@ -8,6 +8,13 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
+where git >nul 2>nul
+if errorlevel 1 (
+  echo The demo needs git. Download it from https://git-scm.com/download/win, install it, then double-click this file again.
+  start https://git-scm.com/download/win
+  pause
+  exit /b 1
+)
 if not exist node_modules (
   echo First run: installing ^(this takes about a minute^)...
   call npm install || (pause & exit /b 1)

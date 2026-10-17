@@ -34,6 +34,9 @@ export function useSnapshot(intervalMs = 700) {
 export async function control(body: Record<string, unknown>) {
   const res = await fetch('/api/control', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
   const json = await res.json();
-  if (!res.ok) throw new Error(json.error ?? 'request failed');
+  if (!res.ok) {
+    window.alert(`That didn't work: ${json.error ?? 'request failed'}`);
+    throw new Error(json.error ?? 'request failed');
+  }
   return json;
 }

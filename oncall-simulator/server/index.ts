@@ -93,6 +93,7 @@ const server = createServer(async (req, res) => {
     if (req.url?.startsWith('/api/')) return send(res, 404, { error: 'not found' });
     serveStatic(req, res);
   } catch (err) {
+    console.error(`  ${req.method} ${req.url} failed: ${(err as Error).message}`);
     send(res, 400, { error: (err as Error).message });
   }
 });
