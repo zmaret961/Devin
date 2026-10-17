@@ -6,7 +6,7 @@ No API keys, no cloud services, no cost. Everything runs on your laptop.
 
 ![Live dashboard](docs/live.png)
 
-![Learning tab after one shift](docs/learning.png)
+![Learning tab after two shifts](docs/learning.png)
 
 ---
 
