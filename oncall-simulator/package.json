@@ -14,7 +14,9 @@
     "build": "vite build",
     "typecheck": "tsc --noEmit",
     "headless": "tsx server/headless.ts",
-    "reset": "tsx server/reset.ts"
+    "reset": "tsx server/reset.ts",
+    "record": "tsx server/record.ts",
+    "build:static": "VITE_STATIC_DEMO=1 vite build"
   },
   "dependencies": {
     "tsx": "4.19"

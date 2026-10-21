@@ -3,3 +3,4 @@ data
 web/dist
 *.log
 data-headless
+data-record

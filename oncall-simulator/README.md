@@ -33,9 +33,16 @@ Other options:
 | `docker compose up --build` | Same thing in a container (port 4100) |
 | `npm run dev` | Hot-reload mode (UI on :5173, engine on :4100) |
 | `npm run headless -- 3` | Runs 3 shifts with no UI and prints how the score improves |
+| `npm run record` | Re-records the 3-shift replay used by the online (Vercel) copy |
 | `npm run reset` | Wipes all shifts and returns to the starter playbook (v1) — do this before a demo |
 
 The **Reset** button in the dashboard does the same as `npm run reset`.
+
+### Online copy (Vercel)
+
+Vercel only hosts static websites, so it can't run the engine (worker threads, git worktrees, state on disk). The online build is a **replay**: `npm run record` runs 3 real shifts of the engine and saves every dashboard update to `web/public/recording.json`; the static build (`npm run build:static`, configured in `vercel.json`) plays it back in the browser. Start, pause, speed, replay and reset work; injecting alerts and merging PRs only work in the local version. Re-run `npm run record` after changing the engine or scenario.
+
+In Vercel, set the project's **Root Directory** to `oncall-simulator`; `vercel.json` sets the build command and output folder (`web/dist`).
 
 ---
 
