@@ -25,11 +25,11 @@ export class Player {
 
   snapshot(): Snapshot {
     const s = this.state;
-    const live = this.seg >= 0 && this.idx < this.rec.segments[this.seg].frames.length;
+    const seg = this.rec.segments[this.seg];
     const status = (s.run.status === 'running' || s.run.status === 'draining') && !this.playing ? 'paused' : s.run.status;
     return {
       ...s,
-      now: live ? this.rec.segments[this.seg].startNow + this.simT : s.now,
+      now: seg ? seg.startNow + Math.min(this.simT, seg.frames.at(-1)?.t ?? 0) : s.now,
       clock: { running: this.playing, speed: this.speed },
       run: { ...s.run, status },
     };
@@ -54,6 +54,7 @@ export class Player {
   private finishSegment() {
     const frames = this.rec.segments[this.seg].frames;
     while (this.idx < frames.length) this.state = applyFrame(this.state, frames[this.idx++]);
+    this.simT = frames.at(-1)?.t ?? 0;
     this.playing = false;
   }
 
@@ -100,5 +101,6 @@ export function getPlayer() {
     if (!r.ok) throw new Error(`recording.json returned ${r.status}`);
     return new Player((await r.json()) as Recording);
   });
+  player.catch(() => (player = undefined));
   return player;
 }
