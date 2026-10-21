@@ -4,6 +4,7 @@ import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Too
 import type { ChildAgent, Snapshot } from '../../../shared/types.ts';
 import { CATEGORY_LABELS, STRATEGY_LABELS } from '../../../shared/types.ts';
 import { DISPOSITION, INC_STATUS, PHASES, SEV, SOURCE, fmtMin, rel } from '../util.ts';
+import { STATIC_DEMO } from '../api.ts';
 import { ActionIcon, Card, Chip, Empty, InlineCode, StepList, StrategyChip, useSelect } from './ui.tsx';
 
 function Kpi({ icon, label, value, sub, accent = 'text-white', info }: { icon: ReactNode; label: string; value: ReactNode; sub?: ReactNode; accent?: string; info?: ReactNode }) {
@@ -313,7 +314,7 @@ export function Scratchpad({ s }: { s: Snapshot }) {
   const list = [...s.scratchpad].reverse();
   const cls: Record<string, string> = { finding: 'text-emerald-300', claim: 'text-amber-300', incidental: 'text-sky-300', race: 'text-amber-300', join: 'text-violet-300', info: 'text-slate-300' };
   return (
-    <Card title={<><Users className="h-3.5 w-3.5" /> Shared scratchpad</>} right={<a href="/api/scratchpad.md" target="_blank" className="text-[11px] text-slate-500 hover:text-slate-300">scratchpad.md ↗</a>} className="h-[260px]" bodyClass="overflow-y-auto px-4 py-2">
+    <Card title={<><Users className="h-3.5 w-3.5" /> Shared scratchpad</>} right={STATIC_DEMO ? undefined : <a href="/api/scratchpad.md" target="_blank" className="text-[11px] text-slate-500 hover:text-slate-300">scratchpad.md ↗</a>} className="h-[260px]" bodyClass="overflow-y-auto px-4 py-2">
       {!list.length ? (
         <Empty>Children post findings, file claims and race results here so siblings don't duplicate work.</Empty>
       ) : (

@@ -1,7 +1,7 @@
 import { BrainCircuit, ChevronDown, FastForward, Pause, Play, Plus, RotateCcw, Sparkles, Zap } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Snapshot } from '../../shared/types.ts';
-import { control, useSnapshot } from './api.ts';
+import { control, STATIC_DEMO, useSnapshot } from './api.ts';
 import { Drawer } from './components/Drawer.tsx';
 import { LearningTab, PlaybookTab } from './components/Learning.tsx';
 import { LiveTab } from './components/Live.tsx';
@@ -261,6 +261,11 @@ export default function App() {
     <SelectContext.Provider value={setSel}>
       <Header s={snap} />
       <main className="mx-auto max-w-[1800px] space-y-4 px-6 py-4">
+        {STATIC_DEMO && (
+          <div className="rounded-lg bg-violet-500/10 px-4 py-2 text-[12.5px] text-violet-100 ring-1 ring-violet-400/20">
+            Online replay: this plays back a recorded run of the real engine (3 shifts). Run it locally with <code className="mono">npm run demo</code> to inject alerts and merge PRs live.
+          </div>
+        )}
         {error && <div className="rounded-lg bg-rose-500/10 px-4 py-2 text-sm text-rose-200">Lost connection to engine: {error}</div>}
         <nav className="flex items-center gap-1 border-b border-white/[0.06]">
           {tabs.map(([id, label, n]) => (

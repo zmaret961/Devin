@@ -4,6 +4,7 @@ import { Bar, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, T
 import type { Learning, Snapshot } from '../../../shared/types.ts';
 import { CATEGORY_LABELS, STRATEGY_LABELS } from '../../../shared/types.ts';
 import { fmtMin } from '../util.ts';
+import { playbookMarkdown } from '../api.ts';
 import { Card, Chip, DiffView, Empty, InlineCode, Markdown, StrategyChip } from './ui.tsx';
 
 const tooltipStyle = { background: '#13141c', border: '1px solid rgba(255,255,255,.1)', borderRadius: 10, fontSize: 12 };
@@ -222,7 +223,7 @@ export function PlaybookTab({ s }: { s: Snapshot }) {
   useEffect(() => setVersion(s.playbook.version), [s.playbook.version]);
   useEffect(() => {
     if (version === s.playbook.version) return setMd(s.playbookMarkdown);
-    fetch(`/api/playbook/v${version}.md`).then(async (r) => setMd(await r.text()));
+    playbookMarkdown(version).then(setMd);
   }, [version, s.playbook.version, s.playbookMarkdown]);
   const retro = s.retros.find((r) => r.toVersion === version);
   const diff = retro?.playbookDiff
