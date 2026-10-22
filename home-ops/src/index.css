@@ -1,0 +1,196 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Public Sans Variable", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --color-paper: #f4f1ea;
+  --color-card: #fffdf9;
+  --color-ink: #1d211f;
+  --color-ink-2: #464c48;
+  --color-muted: #6f746f;
+  --color-line: #e3ded2;
+  --color-line-strong: #cfc8b8;
+  --color-pine: #24564a;
+  --color-pine-dark: #1a4238;
+  --color-pine-soft: #e2ebe6;
+  --color-ochre: #b4741e;
+  --color-ochre-soft: #f6ead6;
+  --color-brick: #b23a2b;
+  --color-brick-soft: #f6e0dc;
+
+  /* Emergency Mode: near-black with signal amber and red, tuned for >7:1 text contrast. */
+  --color-night: #111214;
+  --color-night-2: #1b1c1f;
+  --color-night-3: #26282c;
+  --color-signal: #ffb21e;
+  --color-signal-soft: #3a2a0c;
+  --color-siren: #ff5a47;
+  --color-siren-deep: #d92d1a;
+
+  --radius-card: 1.25rem;
+}
+
+:root {
+  color-scheme: light;
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+}
+
+html,
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+html[data-emergency="on"],
+html[data-emergency="on"] body {
+  background: var(--color-night);
+  color: #f5f5f4;
+  color-scheme: dark;
+}
+
+/* iOS-style liquid glass (light), after the Apex CRM `glass` / `interactive` pattern. */
+.glass {
+  background: rgba(255, 253, 249, 0.62);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 12px 32px rgba(29, 33, 31, 0.12),
+    0 1px 2px rgba(29, 33, 31, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(29, 33, 31, 0.05);
+}
+
+html[data-emergency="on"] .glass {
+  background: rgba(27, 28, 31, 0.66);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.interactive {
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1.4, 0.36, 1),
+    background-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+@media (hover: hover) {
+  .interactive:hover {
+    transform: translateY(-1px);
+  }
+}
+.interactive:active {
+  transform: scale(0.97);
+}
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+}
+
+/* Keyboard focus is always visible; mouse/touch focus stays quiet. */
+:focus-visible {
+  outline: 3px solid var(--color-pine);
+  outline-offset: 2px;
+  border-radius: 0.75rem;
+}
+html[data-emergency="on"] :focus-visible {
+  outline-color: var(--color-signal);
+}
+
+.pb-tabbar {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 7.5rem);
+}
+.pt-safe {
+  padding-top: calc(env(safe-area-inset-top) + 1.25rem);
+}
+
+/* Native <dialog> bottom sheet */
+dialog.sheet {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 40rem;
+  max-height: 92dvh;
+  padding: 0;
+  border: 0;
+  border-radius: 1.5rem 1.5rem 0 0;
+  background: var(--color-card);
+  color: var(--color-ink);
+  box-shadow: 0 -12px 40px rgba(29, 33, 31, 0.18);
+}
+@media (min-width: 640px) {
+  dialog.sheet {
+    margin: auto;
+    border-radius: 1.5rem;
+  }
+}
+dialog.sheet::backdrop {
+  background: rgba(20, 22, 21, 0.42);
+  backdrop-filter: blur(2px);
+}
+dialog.sheet[open] {
+  animation: sheet-in 0.32s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+html[data-emergency="on"] dialog.sheet {
+  background: var(--color-night-2);
+  color: #f5f5f4;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #ece8df 0%, #f5f2ec 50%, #ece8df 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 0.75rem;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.55;
+}
+
+/* Reduced motion: honor the OS setting and the in-app override. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+html.reduce-motion .interactive:hover,
+html.reduce-motion .interactive:active {
+  transform: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
